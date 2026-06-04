@@ -13,6 +13,7 @@ import {
 import { Link } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '@/context/auth-context'
+import { getApiBaseUrl } from '@/lib/api'
 import { Fonts, Spacing } from '@/constants/theme'
 
 export default function SignUpScreen() {
@@ -39,7 +40,7 @@ export default function SignUpScreen() {
     setLoading(true)
     try {
       // Call 1chooo.com sign-up API then sign in
-      const res = await fetch('https://1chooo.com/api/auth/sign-up', {
+      const res = await fetch(`${getApiBaseUrl()}/api/auth/sign-up`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),

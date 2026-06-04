@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "http-proxy": "^1.18.1",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -43,7 +44,7 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
+    "web": "node scripts/web-dev.mjs",
     "lint": "expo lint"
   },
   "private": true

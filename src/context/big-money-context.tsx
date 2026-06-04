@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { MoneyEntry, MoneySummary } from '@/types/money'
 import { getMoneyEntries } from '@/lib/api'
 import { computeSummary } from '@/lib/money'
+import { useAuth } from '@/context/auth-context'
 
 interface BigMoneyContextValue {
   entries: MoneyEntry[]
@@ -21,14 +22,22 @@ export function useBigMoney() {
 }
 
 export function BigMoneyProvider({ children }: { children: React.ReactNode }) {
+  const { session } = useAuth()
   const [entries, setEntries] = useState<MoneyEntry[]>([])
   const [loading, setLoading] = useState(true)
 
   const summary = useMemo<MoneySummary>(() => computeSummary(entries), [entries])
 
   async function refresh() {
+    if (!session?.access_token) {
+      setEntries([])
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
     try {
-      const data = await getMoneyEntries()
+      const data = await getMoneyEntries(session.access_token)
       setEntries(data.entries)
     } finally {
       setLoading(false)
@@ -37,7 +46,7 @@ export function BigMoneyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     refresh()
-  }, [])
+  }, [session?.access_token])
 
   function handleCreated(entry: MoneyEntry) {
     setEntries(prev => [entry, ...prev])
